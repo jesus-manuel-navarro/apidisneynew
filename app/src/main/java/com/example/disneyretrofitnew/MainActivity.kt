@@ -20,7 +20,8 @@ class MainActivity : AppCompatActivity() {
         textView=findViewById(R.id.textView)
         crearLista()
         textView.text = "prueba"
-        textView.append(lista.toString())
+        textView.append("prueba2")
+        textView.append (lista.toString())
     }
 
     fun getRetrofit(): Retrofit {
@@ -29,10 +30,24 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create()) //inicialización
             .build()
     }
+    fun crearLista(){
+        // Las llamadas a internet se hacen en corutinas
+        CoroutineScope(Dispatchers.IO).launch {
+            //Lanzamos el hilo a través de la interfaz que hemos creado (ServicioApi) y la func conseguirLista de la misma
+            val llamada = getRetrofit().create(ServicioApi::class.java).conseguirLista()
+            if(llamada.isSuccessful){
+                /*Necesitamos permiso de internet en el manifest, para poder acceder a la web de rutas*/
+                escribirLista(llamada.body()) //podemos crear val data=llamada.body()?.data y escribirLista(data)
+            }else{
+                Log.i("TENGO LISTA:","NO")
+            }
+        }
+    }
 
     private fun escribirLista(data:ApiDisneyClass?) {
 
         data?.data?.forEach{
+
             lista.append(it.name).append("\n")
             // Si queremos incluir texto: lista.append("Personaje: ${it.name} \n")
         }
@@ -55,18 +70,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun crearLista(){
-        // Las llamadas a internet se hacen en corutinas
-        CoroutineScope(Dispatchers.IO).launch {
-            //Lanzamos el hilo a través de la interfaz que hemos creado (ServicioApi) y la func conseguirLista de la misma
-            val llamada = getRetrofit().create(ServicioApi::class.java).conseguirLista()
-            if(llamada.isSuccessful){
-                /*Necesitamos permiso de internet en el manifest, para poder acceder a la web de rutas*/
-               escribirLista(llamada.body()) //podemos crear val data=llamada.body()?.data y escribirLista(data)
-            }else{
-                Log.i("TENGO LISTA:","NO")
-            }
-        }
-    }
+
 
 }
