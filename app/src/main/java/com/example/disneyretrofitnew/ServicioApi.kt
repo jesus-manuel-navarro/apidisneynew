@@ -8,7 +8,8 @@ import retrofit2.Response
 interface ServicioApi {
     @GET("/character")
     /*Para que una corutina funcione, es obligatorio poner suspend primero*/
-    suspend fun conseguirLista(
+    // suspend fun conseguirLista(
+     fun conseguirLista(
         //No necesitamos las @Query porque el plugin ya las contempla
     ):Response<ApiDisneyClass>
 }

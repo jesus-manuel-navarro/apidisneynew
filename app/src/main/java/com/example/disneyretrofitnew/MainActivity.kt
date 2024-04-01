@@ -10,18 +10,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
+// TODO NO ESTAMOS USANDO COURRUTINAS PERO EN ESTOS CASOS DEBERIAMOS USARLAS
 class MainActivity : AppCompatActivity() {
     lateinit var textView: TextView
-    var lista = StringBuilder()
+    // TODO ESTA VARIABLE SE DECLARA AQUI PARA QUE TENGA AMBITO GLOBAL
+    val lista = StringBuilder()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         textView=findViewById(R.id.textView)
         crearLista()
-        textView.text = "prueba"
-        textView.append("prueba2")
-        textView.append (lista.toString())
+        textView.text = lista.toString()
+
+       // textView.append (lista.toString())
     }
 
     fun getRetrofit(): Retrofit {
@@ -32,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     }
     fun crearLista(){
         // Las llamadas a internet se hacen en corutinas
-        CoroutineScope(Dispatchers.IO).launch {
+
             //Lanzamos el hilo a través de la interfaz que hemos creado (ServicioApi) y la func conseguirLista de la misma
             val llamada = getRetrofit().create(ServicioApi::class.java).conseguirLista()
             if(llamada.isSuccessful){
@@ -41,17 +42,16 @@ class MainActivity : AppCompatActivity() {
             }else{
                 Log.i("TENGO LISTA:","NO")
             }
-        }
+
     }
 
-    private fun escribirLista(data:ApiDisneyClass?) {
+     fun escribirLista(data:ApiDisneyClass?) {
 
         data?.data?.forEach{
+// TODO AQUI RECUPERAMOS SOLO LOS NOMBRES DEL OBJETO DATA
+            lista.append(it.name)
 
-            lista.append(it.name).append("\n")
-            // Si queremos incluir texto: lista.append("Personaje: ${it.name} \n")
         }
-        //llamada en la corrutina desde la actividad dónde esté (runOnUiThread) para ejecutar en el hilo principal (ej:toast)
 
 
 
